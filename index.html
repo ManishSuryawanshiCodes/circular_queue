@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Circular Queue Visualizer - DES Pune University</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="app-container">
+      <!-- Animated Background -->
+      <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content-wrapper">
+        <!-- Header Section -->
+        <header class="header-section">
+          <div class="header-top">
+            <div class="logo-area">
+              <div class="logo-badge">📚 CE3</div>
+              <div class="main-title">Circular Queue Visualizer</div>
+              <p class="subtitle">
+                Data Structures Learning Tool | DES Pune University
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+          <!-- Left Panel: Visualization & Input -->
+          <div class="main-panel">
+            <!-- Setup Section -->
+            <div class="setup-section glass-card">
+              <h3 class="section-title">⚙️ Configuration</h3>
+              <div class="setup-grid">
+                <div class="mode-selector">
+                  <label class="option-label">Queue Type</label>
+                  <div class="button-group">
+                    <button id="arrayModeBtn" class="mode-btn active">
+                      <span class="btn-icon">📊</span>
+                      <span>Array</span>
+                    </button>
+                    <button id="linkedListModeBtn" class="mode-btn">
+                      <span class="btn-icon">🔗</span>
+                      <span>Linked List</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div id="arraySizeControl" class="size-input-group">
+                  <label class="option-label">Array Size</label>
+                  <div class="size-input-wrapper">
+                    <input
+                      type="number"
+                      id="arraySizeInput"
+                      value="5"
+                      min="2"
+                      max="10"
+                      class="size-input"
+                      title="Enter array size between 2 and 10"
+                    />
+                    <button id="setSizeBtn" class="btn-small">Set Size</button>
+                  </div>
+                  <p class="helper-text">Min: 2, Max: 10</p>
+                </div>
+
+                <div class="control-buttons">
+                  <button id="resetBtn" class="btn btn-danger">
+                    🔄 Reset Queue
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visualization Section -->
+            <div
+              id="arrayVisualization"
+              class="visualization-section glass-card"
+            >
+              <div class="viz-header">
+                <h3 class="section-title">📊 Array Implementation</h3>
+                <div class="capacity-badge" id="capacityBadge">0/5</div>
+              </div>
+              <div class="array-info-grid">
+                <div class="info-box">
+                  <span class="info-title">Front Index</span>
+                  <span class="info-value" id="arrayFront">-</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-title">Rear Index</span>
+                  <span class="info-value" id="arrayRear">-</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-title">Next Position</span>
+                  <span class="info-value" id="arrayNext">-</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-title">Current Size</span>
+                  <span class="info-value" id="arraySize">0</span>
+                </div>
+              </div>
+              <div class="canvas-wrapper">
+                <svg
+                  id="arrayCanvas"
+                  width="100%"
+                  height="320"
+                  viewBox="0 0 700 320"
+                  preserveAspectRatio="xMidYMid meet"
+                ></svg>
+              </div>
+            </div>
+
+            <div
+              id="linkedListVisualization"
+              class="visualization-section glass-card hidden"
+            >
+              <div class="viz-header">
+                <h3 class="section-title">🔗 Linked List Implementation</h3>
+                <div class="size-badge" id="llSizeBadge">0 nodes</div>
+              </div>
+              <div class="ll-info-grid">
+                <div class="info-box">
+                  <span class="info-title">Front Value</span>
+                  <span class="info-value" id="llFront">-</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-title">Rear Value</span>
+                  <span class="info-value" id="llRear">-</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-title">Total Nodes</span>
+                  <span class="info-value" id="llSize">0</span>
+                </div>
+                <div class="info-box">
+                  <span class="info-title">Circular Link</span>
+                  <span class="info-value" id="llCircular">❌</span>
+                </div>
+              </div>
+              <div class="canvas-wrapper">
+                <svg
+                  id="linkedListCanvas"
+                  width="100%"
+                  height="420"
+                  viewBox="0 0 700 420"
+                  preserveAspectRatio="xMidYMid meet"
+                ></svg>
+              </div>
+            </div>
+
+            <!-- Operations Section (directly below visualization) -->
+            <div class="operations-section glass-card">
+              <h3 class="section-title">⚡ Queue Operations</h3>
+              <div class="operations-layout">
+                <div class="input-group">
+                  <label for="enqueueInput" class="option-label"
+                    >Enter Value (1-99)</label
+                  >
+                  <input
+                    type="number"
+                    id="enqueueInput"
+                    placeholder="Type a number..."
+                    min="1"
+                    max="99"
+                    class="input-field"
+                  />
+                </div>
+                <div class="button-row">
+                  <button id="enqueueBtn" class="btn btn-success">
+                    ➕ Enqueue
+                  </button>
+                  <button id="dequeueBtn" class="btn btn-warning">
+                    ➖ Dequeue
+                  </button>
+                </div>
+                <div class="button-row">
+                  <button id="peekBtn" class="btn btn-info">👁️ Peek</button>
+                  <button id="isEmptyBtn" class="btn btn-info">
+                    ❓ Is Empty
+                  </button>
+                </div>
+                <div class="button-row">
+                  <button id="isFullBtn" class="btn btn-info">
+                    ⚠️ Is Full
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Sidebar -->
+          <aside class="sidebar-panel glass-card">
+            <!-- Quick Stats -->
+            <div class="stats-section">
+              <h4 class="sidebar-title">📊 Status</h4>
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <span class="stat-label">Mode</span>
+                  <span class="stat-val" id="statusMode">Array</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">Count</span>
+                  <span class="stat-val" id="statusCount">0</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">State</span>
+                  <span class="stat-val" id="statusState">Empty</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">Capacity</span>
+                  <span class="stat-val" id="statusCap">5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- How It Works Section -->
+            <div class="working-section">
+              <h4 class="sidebar-title">🔍 How It Works</h4>
+              <div class="working-content">
+                <div class="working-step" id="workingStep">
+                  <div class="step-number">Step</div>
+                  <div class="step-info">
+                    <p class="step-title" id="workingTitle">Ready</p>
+                    <p class="step-desc" id="workingDesc">Queue is empty</p>
+                  </div>
+                </div>
+                <div class="working-code">
+                  <code id="workingCode">front = -1, rear = -1</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Operation Log -->
+            <div class="log-section">
+              <div class="log-header">
+                <h4 class="sidebar-title">📝 Operation Log</h4>
+                <button id="clearLogBtn" class="btn-icon" title="Clear log">
+                  ✕
+                </button>
+              </div>
+              <div class="log-container">
+                <div id="logContainer" class="log-list">
+                  <div class="log-entry info">
+                    <span class="log-icon">ℹ️</span>
+                    <div class="log-text">
+                      <p class="log-msg">Queue initialized</p>
+                      <p class="log-detail">Ready to perform operations</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formula Reference -->
+            <div class="formula-ref-section">
+              <h4 class="sidebar-title">📐 Formulas</h4>
+              <div class="formula-list">
+                <div class="formula-item">
+                  <span class="formula-label">Enqueue:</span>
+                  <code>rear = (rear + 1) % SIZE</code>
+                </div>
+                <div class="formula-item">
+                  <span class="formula-label">Dequeue:</span>
+                  <code>front = (front + 1) % SIZE</code>
+                </div>
+                <div class="formula-item">
+                  <span class="formula-label">Full:</span>
+                  <code>(rear + 1) % SIZE == front</code>
+                </div>
+                <div class="formula-item">
+                  <span class="formula-label">Size:</span>
+                  <code>(rear - front + SIZE) % SIZE + 1</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Help -->
+            <div class="help-section">
+              <h4 class="sidebar-title">💡 Quick Help</h4>
+              <ul class="help-list">
+                <li><strong>Enqueue:</strong> Add element to rear</li>
+                <li><strong>Dequeue:</strong> Remove from front</li>
+                <li><strong>FIFO:</strong> First In, First Out</li>
+                <li><strong>Circular:</strong> Rear connects to Front</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
