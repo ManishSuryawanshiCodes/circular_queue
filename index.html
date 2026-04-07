@@ -78,6 +78,28 @@
               </div>
             </div>
 
+            <!-- Quick Status Check Section -->
+            <div class="status-check-section glass-card">
+              <h3 class="section-title">✅ Queue Status Check</h3>
+              <div class="status-buttons-grid">
+                <button id="isEmptyBtn" class="btn btn-info btn-large">
+                  ❓ Is Empty
+                </button>
+                <button id="isFullBtn" class="btn btn-info btn-large">
+                  ⚠️ Is Full
+                </button>
+                <button id="peekBtn" class="btn btn-info btn-large">
+                  👁️ Peek Front
+                </button>
+              </div>
+              <!-- Result Display Area (Persistent) -->
+              <div id="operationResult" class="operation-result hidden">
+                <div class="result-content">
+                  <span id="resultText"></span>
+                </div>
+              </div>
+            </div>
+
             <!-- Visualization Section -->
             <div
               id="arrayVisualization"
@@ -177,23 +199,6 @@
                   <button id="dequeueBtn" class="btn btn-warning">
                     ➖ Dequeue
                   </button>
-                </div>
-                <div class="button-row">
-                  <button id="peekBtn" class="btn btn-info">👁️ Peek</button>
-                  <button id="isEmptyBtn" class="btn btn-info">
-                    ❓ Is Empty
-                  </button>
-                </div>
-                <div class="button-row">
-                  <button id="isFullBtn" class="btn btn-info">
-                    ⚠️ Is Full
-                  </button>
-                </div>
-              </div>
-              <!-- Result Display Area -->
-              <div id="operationResult" class="operation-result hidden">
-                <div class="result-content">
-                  <span id="resultText"></span>
                 </div>
               </div>
             </div>

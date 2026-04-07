@@ -483,6 +483,41 @@ body {
   border-radius: var(--radius-lg);
 }
 
+/* Status Check Section */
+.status-check-section {
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(14, 165, 233, 0.08) 0%,
+    rgba(6, 182, 212, 0.08) 100%
+  );
+  border: 1.5px solid rgba(14, 165, 233, 0.2);
+}
+
+.status-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.btn-large {
+  padding: 16px 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  height: auto;
+  min-height: 56px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+.btn-large:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+}
+
 .operations-layout {
   display: flex;
   flex-direction: column;

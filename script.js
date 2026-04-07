@@ -229,17 +229,13 @@ let currentMode = 'array';
 let arrayQueue = new CircularQueueArray(5);
 let linkedListQueue = new CircularQueueLinkedList();
 
-// Display result on UI
+// Display result on UI - stays visible until next operation
 function displayResult(message) {
     const resultDiv = document.getElementById('operationResult');
     const resultText = document.getElementById('resultText');
     resultText.textContent = message;
     resultDiv.classList.remove('hidden');
-    
-    // Auto-hide after 4 seconds
-    setTimeout(() => {
-        resultDiv.classList.add('hidden');
-    }, 4000);
+    // Result now stays visible until next operation is performed
 }
 
 // Array Queue Visualization
