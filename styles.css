@@ -1,7 +1,4 @@
-/* ===============================================
-   CIRCULAR QUEUE VISUALIZER - PREMIUM HANDCRAFTED DESIGN
-   Modern Glassmorphism with Professional Aesthetics
-   =============================================== */
+/* Circular Queue Visualizer Styles */
 
 :root {
   --primary: #6366f1;
@@ -55,7 +52,7 @@ body {
   line-height: 1.6;
 }
 
-/* ===== BACKGROUND ANIMATION ===== */
+/* Background animation */
 .animated-background {
   position: fixed;
   top: 0;
@@ -122,7 +119,7 @@ body {
   }
 }
 
-/* ===== GLASS CARD ===== */
+/* Glass card effect */
 .glass-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
@@ -143,7 +140,7 @@ body {
   display: none !important;
 }
 
-/* ===== APP CONTAINER ===== */
+/* App container */
 .app-container {
   position: relative;
   z-index: 1;
@@ -156,7 +153,7 @@ body {
   margin: 0 auto;
 }
 
-/* ===== HEADER SECTION ===== */
+/* Header */
 .header-section {
   margin-bottom: 40px;
   animation: slideDown 0.7s ease-out;
@@ -208,22 +205,22 @@ body {
   font-weight: 500;
 }
 
-/* ===== MAIN LAYOUT ===== */
+/* Main layout */
 .main-layout {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr;
   gap: 24px;
   animation: slideUp 0.7s ease-out 0.15s both;
 }
 
-/* ===== MAIN PANEL ===== */
+/* Main panel */
 .main-panel {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* ===== SETUP SECTION ===== */
+/* Setup section */
 .section-title {
   font-size: 1.1rem;
   font-weight: 700;
@@ -295,7 +292,7 @@ body {
   font-size: 1.2rem;
 }
 
-/* ===== SIZE INPUT ===== */
+/* Size input */
 .size-input-group {
   display: flex;
   flex-direction: column;
@@ -353,7 +350,7 @@ body {
   gap: 12px;
 }
 
-/* ===== BUTTONS ===== */
+/* Buttons */
 .btn {
   padding: 12px 24px;
   border: none;
@@ -393,7 +390,7 @@ body {
   color: white;
 }
 
-/* ===== VISUALIZATION SECTION ===== */
+/* Visualization section */
 .visualization-section {
   padding: 28px;
   border-radius: var(--radius-lg);
@@ -480,78 +477,7 @@ body {
   line-height: 1;
 }
 
-/* ===== WORKING SECTION ===== */
-.working-section {
-  padding: 24px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, #faf9f7 0%, #f3f0eb 100%);
-}
-
-.working-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.working-step {
-  display: flex;
-  gap: 16px;
-  padding: 16px;
-  background: #ffffff;
-  border-radius: var(--radius-md);
-  border-left: 4px solid #6366f1;
-  animation: slideIn 0.4s ease-out;
-}
-
-.step-number {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #6366f1, #818cf8);
-  color: white;
-  border-radius: 50%;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.step-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.step-title {
-  font-weight: 700;
-  color: var(--text);
-  font-size: 1rem;
-  margin-bottom: 4px;
-}
-
-.step-desc {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-}
-
-.working-code {
-  background: #f8fafc;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid #e2e8f0;
-  font-family: "Courier New", monospace;
-}
-
-.working-code code {
-  color: #6366f1;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-/* ===== OPERATIONS SECTION ===== */
+/* Operations section */
 .operations-section {
   padding: 24px;
   border-radius: var(--radius-lg);
@@ -593,209 +519,34 @@ body {
   gap: 12px;
 }
 
-/* ===== SIDEBAR ===== */
-.sidebar-panel {
-  padding: 24px;
-  border-radius: var(--radius-lg);
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
-}
-
-.sidebar-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar-panel::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar-panel::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-.sidebar-panel::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.sidebar-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 14px;
-}
-
-/* ===== STATS SECTION ===== */
-.stats-section {
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.stat-box {
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
+/* Result Display */
+.operation-result {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
   border-radius: var(--radius-md);
-  padding: 14px;
-  text-align: center;
+  border-left: 4px solid #0284c7;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
 }
 
-.stat-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.stat-val {
-  display: block;
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #6366f1;
-  font-family: "Courier New", monospace;
-}
-
-/* ===== FORMULA SECTION ===== */
-.formula-ref-section {
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.formula-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.formula-item {
-  background: #f8fafc;
-  padding: 12px;
-  border-radius: var(--radius-md);
-  border-left: 3px solid #6366f1;
-}
-
-.formula-label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
-}
-
-.formula-item code {
-  display: block;
-  font-size: 0.75rem;
-  font-family: "Courier New", monospace;
-  color: #6366f1;
-  word-break: break-all;
-  font-weight: 600;
-}
-
-/* ===== LOG SECTION ===== */
-.log-section {
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.log-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: var(--radius-md);
-  cursor: pointer;
+.result-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  transition: var(--transition);
+  gap: 12px;
 }
 
-.btn-icon:hover {
-  background: #e2e8f0;
-  color: var(--text);
-}
-
-.log-container {
-  max-height: 240px;
-  overflow-y: auto;
-  border-radius: var(--radius-md);
-  background: #f8fafc;
-  padding: 8px;
-}
-
-.log-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.log-entry {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  background: #ffffff;
-  border-radius: var(--radius-sm);
-  border-left: 3px solid;
-  animation: slideIn 0.3s ease-out;
-}
-
-.log-entry.info {
-  border-left-color: #0ea5e9;
-}
-
-.log-entry.success {
-  border-left-color: #10b981;
-  background: #f0fdf4;
-}
-
-.log-entry.error {
-  border-left-color: #ef4444;
-  background: #fef2f2;
-}
-
-.log-icon {
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-.log-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.log-msg {
-  font-size: 0.85rem;
+#resultText {
+  color: #ffffff;
   font-weight: 600;
-  color: var(--text);
-  margin-bottom: 2px;
+  font-size: 1.05rem;
+  text-align: center;
+  line-height: 1.5;
 }
 
-.log-detail {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+.operation-result.hidden {
+  display: none;
 }
 
 /* ===== HELP SECTION ===== */

@@ -104,7 +104,7 @@ class CircularQueueArray {
     }
 }
 
-// ==================== Circular Queue Linked List Implementation ====================
+// Node class for linked list
 class Node {
     constructor(data) {
         this.data = data;
@@ -224,90 +224,25 @@ class CircularQueueLinkedList {
     }
 }
 
-// ==================== Global State ====================
+// Global state
 let currentMode = 'array';
 let arrayQueue = new CircularQueueArray(5);
 let linkedListQueue = new CircularQueueLinkedList();
 
-// ==================== Log & UI Functions ====================
-function addLog(message, detail, type = 'info') {
-    const logContainer = document.getElementById('logContainer');
-    const logEntry = document.createElement('div');
+// Display result on UI
+function displayResult(message) {
+    const resultDiv = document.getElementById('operationResult');
+    const resultText = document.getElementById('resultText');
+    resultText.textContent = message;
+    resultDiv.classList.remove('hidden');
     
-    logEntry.className = `log-entry ${type}`;
-    logEntry.innerHTML = `
-        <span class="log-icon">${getLogIcon(type)}</span>
-        <div class="log-text">
-            <p class="log-msg">${message}</p>
-            ${detail ? `<p class="log-detail">${detail}</p>` : ''}
-        </div>
-    `;
-
-    logContainer.insertBefore(logEntry, logContainer.firstChild);
-
-    while (logContainer.children.length > 15) {
-        logContainer.removeChild(logContainer.lastChild);
-    }
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+        resultDiv.classList.add('hidden');
+    }, 4000);
 }
 
-function getLogIcon(type) {
-    const icons = { 'info': 'ℹ️', 'success': '✅', 'error': '❌' };
-    return icons[type] || '•';
-}
-
-function updateStatusPanel() {
-    const mode = currentMode === 'array' ? 'Array' : 'Linked List';
-    const size = currentMode === 'array' ? arrayQueue.getSize() : linkedListQueue.getSize();
-    const capacity = currentMode === 'array' ? arrayQueue.size : '∞';
-    
-    let state = 'Empty';
-    if (size > 0) {
-        state = (currentMode === 'array' && arrayQueue.isFull()) ? 'Full' : 'Active';
-    }
-
-    document.getElementById('statusMode').textContent = mode;
-    document.getElementById('statusCount').textContent = size;
-    document.getElementById('statusState').textContent = state;
-    document.getElementById('statusCap').textContent = capacity;
-}
-
-function updateWorkingSection(message, code) {
-    const workingStep = document.getElementById('workingStep');
-    const workingCode = document.getElementById('workingCode');
-    const stepNumber = workingStep.querySelector('.step-number');
-    const stepTitle = workingStep.querySelector('.step-title');
-    const stepDesc = workingStep.querySelector('.step-desc');
-    
-    if (currentMode === 'array') {
-        const size = arrayQueue.getSize();
-        const front = arrayQueue.front === -1 ? '-' : arrayQueue.front;
-        const rear = arrayQueue.rear === -1 ? '-' : arrayQueue.rear;
-        
-        stepTitle.textContent = message;
-        if (size === 0) {
-            stepDesc.textContent = 'Queue is empty. Ready for operations.';
-            workingCode.innerHTML = `<code>front = -1, rear = -1</code>`;
-        } else if (arrayQueue.isFull()) {
-            stepDesc.textContent = 'Queue is completely full. Cannot add more elements.';
-            workingCode.innerHTML = `<code>(rear + 1) % ${arrayQueue.size} == front (true)</code>`;
-        } else {
-            stepDesc.textContent = `Elements in queue: ${size}. FRONT at [${front}], REAR at [${rear}]`;
-            workingCode.innerHTML = `<code>front = ${front}, rear = ${rear}, size = ${size}</code>`;
-        }
-    } else {
-        const size = linkedListQueue.getSize();
-        stepTitle.textContent = message;
-        if (size === 0) {
-            stepDesc.textContent = 'Linked List is empty. Ready for operations.';
-            workingCode.innerHTML = `<code>front = null, rear = null</code>`;
-        } else {
-            stepDesc.textContent = `Elements in queue: ${size}. Circular link: Yes`;
-            workingCode.innerHTML = `<code>Nodes: ${size}, Circular: Yes</code>`;
-        }
-    }
-}
-
-// ==================== Array Queue Visualization ====================
+// Array Queue Visualization
 function drawArrayQueue() {
     const canvas = document.getElementById('arrayCanvas');
     const svgNS = 'http://www.w3.org/2000/svg';
@@ -506,7 +441,7 @@ function drawArrayQueue() {
     document.getElementById('capacityBadge').textContent = `${arrayQueue.getSize()}/${arrayQueue.size}`;
 }
 
-// ==================== Linked List Queue Visualization ====================
+// Linked List Queue Visualization
 function drawLinkedListQueue() {
     const canvas = document.getElementById('linkedListCanvas');
     const svgNS = 'http://www.w3.org/2000/svg';
@@ -813,7 +748,7 @@ function drawLinkedListQueue() {
     document.getElementById('llCircular').textContent = linkedListQueue.getSize() > 0 ? '✅' : '❌';
 }
 
-// ==================== Event Listeners ====================
+// Event Listeners
 document.getElementById('arrayModeBtn').addEventListener('click', () => {
     currentMode = 'array';
     
@@ -823,10 +758,7 @@ document.getElementById('arrayModeBtn').addEventListener('click', () => {
     document.getElementById('arrayModeBtn').classList.add('active');
     document.getElementById('linkedListModeBtn').classList.remove('active');
     
-    addLog('Switched to Array Implementation (Size: 5)', 'info', 'Fixed capacity with modulo arithmetic');
-    updateStatusPanel();
     drawArrayQueue();
-    updateWorkingSection('Array Mode Active', 'Fixed size array with circular queue logic');
 });
 
 document.getElementById('linkedListModeBtn').addEventListener('click', () => {
@@ -838,34 +770,26 @@ document.getElementById('linkedListModeBtn').addEventListener('click', () => {
     document.getElementById('linkedListModeBtn').classList.add('active');
     document.getElementById('arrayModeBtn').classList.remove('active');
     
-    addLog('Switched to Linked List Implementation (Dynamic Size)', 'info', 'Unlimited capacity with node pointers');
-    updateStatusPanel();
     drawLinkedListQueue();
-    updateWorkingSection('Linked List Mode Active', 'Dynamic nodes with circular linking');
 });
 
-// Set Array Size Button
 document.getElementById('setSizeBtn').addEventListener('click', () => {
     const input = document.getElementById('arraySizeInput');
     const newSize = parseInt(input.value);
 
     if (isNaN(newSize) || newSize < 2 || newSize > 10) {
-        addLog('Invalid size! Please enter a value between 2-10', 'error');
+        alert('Please enter a size between 2-10');
         input.value = arrayQueue.size;
         return;
     }
 
     if (newSize === arrayQueue.size) {
-        addLog('New size is the same as current size', 'error');
+        alert('Size is already ' + newSize);
         return;
     }
 
-    const oldSize = arrayQueue.size;
     arrayQueue = new CircularQueueArray(newSize);
     document.getElementById('arraySizeInput').value = newSize;
-    
-    addLog(`Array size changed: ${oldSize} → ${newSize}`, 'success', `Queue cleared | New capacity: ${newSize}`);
-    updateStatusPanel();
     drawArrayQueue();
 });
 
@@ -874,58 +798,39 @@ document.getElementById('enqueueBtn').addEventListener('click', () => {
     const value = parseInt(input.value);
 
     if (!input.value || isNaN(value) || value < 1 || value > 99) {
-        addLog('Invalid input! Please enter a value between 1-99', 'error');
+        alert('Enter a value between 1-99');
         return;
     }
 
-    let result;
     if (currentMode === 'array') {
-        result = arrayQueue.enqueue(value);
-        if (result.success) {
-            addLog(`${result.message}`, 'success', result.formula);
-            drawArrayQueue();
-            updateWorkingSection(`Enqueued: ${value}`, `rear = (rear + 1) % ${arrayQueue.size}`);
-        } else {
-            addLog(result.message, 'error', result.formula);
-            updateWorkingSection('Queue is Full!', `Cannot add more elements`);
+        const result = arrayQueue.enqueue(value);
+        if (!result.success) {
+            alert(result.message);
         }
+        drawArrayQueue();
     } else {
-        result = linkedListQueue.enqueue(value);
-        addLog(result.message, 'success', result.formula);
+        linkedListQueue.enqueue(value);
         drawLinkedListQueue();
-        updateWorkingSection(`Enqueued: ${value}`, `New node created and linked`);
     }
 
     input.value = '';
     input.focus();
-    updateStatusPanel();
 });
 
 document.getElementById('dequeueBtn').addEventListener('click', () => {
-    let result;
     if (currentMode === 'array') {
-        result = arrayQueue.dequeue();
-        if (result.success) {
-            addLog(result.message, 'success', result.formula);
-            drawArrayQueue();
-            updateWorkingSection(`Dequeued Element`, `front = (front + 1) % ${arrayQueue.size}`);
-        } else {
-            addLog(result.message, 'error', result.formula);
-            updateWorkingSection('Empty Queue!', 'Cannot remove from empty queue');
+        const result = arrayQueue.dequeue();
+        if (!result.success) {
+            alert(result.message);
         }
+        drawArrayQueue();
     } else {
-        result = linkedListQueue.dequeue();
-        if (result.success) {
-            addLog(result.message, 'success', result.formula);
-            drawLinkedListQueue();
-            updateWorkingSection(`Dequeued Element`, 'Front node removed');
-        } else {
-            addLog(result.message, 'error', result.formula);
-            updateWorkingSection('Empty Queue!', 'Cannot remove from empty queue');
+        const result = linkedListQueue.dequeue();
+        if (!result.success) {
+            alert(result.message);
         }
+        drawLinkedListQueue();
     }
-
-    updateStatusPanel();
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
@@ -933,16 +838,11 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     linkedListQueue.reset();
     document.getElementById('enqueueInput').value = '';
     
-    addLog('Queue reset to initial state', 'info', 'All elements cleared');
-    
     if (currentMode === 'array') {
         drawArrayQueue();
     } else {
         drawLinkedListQueue();
     }
-    
-    updateStatusPanel();
-    updateWorkingSection('Queue Reset', 'All elements cleared. Ready for operations.');
 });
 
 document.getElementById('peekBtn').addEventListener('click', () => {
@@ -954,11 +854,9 @@ document.getElementById('peekBtn').addEventListener('click', () => {
     }
 
     if (result.success) {
-        addLog(result.message, 'success', result.detail);
-        updateWorkingSection(`Peek Operation`, `Front element: ${result.element}`);
+        displayResult('👁️ Front Element: ' + result.element);
     } else {
-        addLog(result.message, 'error', result.detail);
-        updateWorkingSection('Empty Queue!', 'No element to peek');
+        displayResult('❌ ' + result.message);
     }
 });
 
@@ -970,50 +868,32 @@ document.getElementById('isEmptyBtn').addEventListener('click', () => {
         isEmpty = linkedListQueue.isEmpty();
     }
 
-    const message = isEmpty ? `Queue is EMPTY` : `Queue is NOT empty (${currentMode} mode)`;
-    const detail = isEmpty ? `All positions are null/No nodes exist` : `Contains elements`;
-    const logType = isEmpty ? 'info' : 'success';
-
-    addLog(message, logType, detail);
-    updateWorkingSection(`Is Empty Check`, message);
+    const msg = isEmpty ? '✅ Queue is EMPTY' : '✖️ Queue is NOT empty';
+    displayResult(msg);
 });
 
 document.getElementById('isFullBtn').addEventListener('click', () => {
-    let result;
     if (currentMode === 'array') {
         const isFull = arrayQueue.isFull();
-        const message = isFull ? `Queue is FULL` : `Queue is NOT full`;
-        const detail = isFull ? `Capacity: ${arrayQueue.size}/filled` : `Available space exists`;
-        const logType = isFull ? 'warning' : 'success';
-        
-        addLog(message, logType, detail);
-        updateWorkingSection(`Is Full Check`, message);
+        const msg = isFull ? '⚠️ Queue is FULL' : '✓ Queue is NOT full';
+        displayResult(msg);
     } else {
-        addLog('Linked List has unlimited capacity', 'info', 'Never becomes full');
-        updateWorkingSection(`Is Full Check`, 'Linked List: Always has capacity');
+        displayResult('ℹ️ Linked List has unlimited capacity');
     }
 });
 
-document.getElementById('clearLogBtn').addEventListener('click', () => {
-    document.getElementById('logContainer').innerHTML = '';
-    addLog('Log cleared', 'info');
-});
-
-// Allow Enter key to enqueue
 document.getElementById('enqueueInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         document.getElementById('enqueueBtn').click();
     }
 });
 
-// ==================== Initialize ====================
+// Initialize on page load
 window.addEventListener('load', () => {
     drawArrayQueue();
-    addLog('Application loaded successfully', 'info', 'Ready to visualize circular queues');
-    updateStatusPanel();
 });
 
-// Redraw on window resize for responsive SVGs
+// Redraw on window resize for responsive visualization
 window.addEventListener('resize', () => {
     if (currentMode === 'array') {
         drawArrayQueue();

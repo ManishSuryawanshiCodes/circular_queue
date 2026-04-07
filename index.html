@@ -33,7 +33,7 @@
 
         <!-- Main Layout -->
         <div class="main-layout">
-          <!-- Left Panel: Visualization & Input -->
+          <!-- Visualization & Input -->
           <div class="main-panel">
             <!-- Setup Section -->
             <div class="setup-section glass-card">
@@ -190,106 +190,14 @@
                   </button>
                 </div>
               </div>
+              <!-- Result Display Area -->
+              <div id="operationResult" class="operation-result hidden">
+                <div class="result-content">
+                  <span id="resultText"></span>
+                </div>
+              </div>
             </div>
           </div>
-
-          <!-- Right Panel: Sidebar -->
-          <aside class="sidebar-panel glass-card">
-            <!-- Quick Stats -->
-            <div class="stats-section">
-              <h4 class="sidebar-title">📊 Status</h4>
-              <div class="stats-grid">
-                <div class="stat-box">
-                  <span class="stat-label">Mode</span>
-                  <span class="stat-val" id="statusMode">Array</span>
-                </div>
-                <div class="stat-box">
-                  <span class="stat-label">Count</span>
-                  <span class="stat-val" id="statusCount">0</span>
-                </div>
-                <div class="stat-box">
-                  <span class="stat-label">State</span>
-                  <span class="stat-val" id="statusState">Empty</span>
-                </div>
-                <div class="stat-box">
-                  <span class="stat-label">Capacity</span>
-                  <span class="stat-val" id="statusCap">5</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- How It Works Section -->
-            <div class="working-section">
-              <h4 class="sidebar-title">🔍 How It Works</h4>
-              <div class="working-content">
-                <div class="working-step" id="workingStep">
-                  <div class="step-number">Step</div>
-                  <div class="step-info">
-                    <p class="step-title" id="workingTitle">Ready</p>
-                    <p class="step-desc" id="workingDesc">Queue is empty</p>
-                  </div>
-                </div>
-                <div class="working-code">
-                  <code id="workingCode">front = -1, rear = -1</code>
-                </div>
-              </div>
-            </div>
-
-            <!-- Operation Log -->
-            <div class="log-section">
-              <div class="log-header">
-                <h4 class="sidebar-title">📝 Operation Log</h4>
-                <button id="clearLogBtn" class="btn-icon" title="Clear log">
-                  ✕
-                </button>
-              </div>
-              <div class="log-container">
-                <div id="logContainer" class="log-list">
-                  <div class="log-entry info">
-                    <span class="log-icon">ℹ️</span>
-                    <div class="log-text">
-                      <p class="log-msg">Queue initialized</p>
-                      <p class="log-detail">Ready to perform operations</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Formula Reference -->
-            <div class="formula-ref-section">
-              <h4 class="sidebar-title">📐 Formulas</h4>
-              <div class="formula-list">
-                <div class="formula-item">
-                  <span class="formula-label">Enqueue:</span>
-                  <code>rear = (rear + 1) % SIZE</code>
-                </div>
-                <div class="formula-item">
-                  <span class="formula-label">Dequeue:</span>
-                  <code>front = (front + 1) % SIZE</code>
-                </div>
-                <div class="formula-item">
-                  <span class="formula-label">Full:</span>
-                  <code>(rear + 1) % SIZE == front</code>
-                </div>
-                <div class="formula-item">
-                  <span class="formula-label">Size:</span>
-                  <code>(rear - front + SIZE) % SIZE + 1</code>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Help -->
-            <div class="help-section">
-              <h4 class="sidebar-title">💡 Quick Help</h4>
-              <ul class="help-list">
-                <li><strong>Enqueue:</strong> Add element to rear</li>
-                <li><strong>Dequeue:</strong> Remove from front</li>
-                <li><strong>FIFO:</strong> First In, First Out</li>
-                <li><strong>Circular:</strong> Rear connects to Front</li>
-              </ul>
-            </div>
-          </aside>
         </div>
       </div>
     </div>
