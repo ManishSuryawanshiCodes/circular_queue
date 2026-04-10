@@ -229,13 +229,67 @@ let currentMode = 'array';
 let arrayQueue = new CircularQueueArray(5);
 let linkedListQueue = new CircularQueueLinkedList();
 
+function getQueueSnapshot() {
+    if (currentMode === 'array') {
+        return `size=${arrayQueue.getSize()}/${arrayQueue.size}, front=${arrayQueue.front === -1 ? '-' : arrayQueue.front}, rear=${arrayQueue.rear === -1 ? '-' : arrayQueue.rear}, empty=${arrayQueue.isEmpty() ? 'yes' : 'no'}, full=${arrayQueue.isFull() ? 'yes' : 'no'}`;
+    }
+    return `nodes=${linkedListQueue.getSize()}, front=${linkedListQueue.front ? linkedListQueue.front.data : '-'}, rear=${linkedListQueue.rear ? linkedListQueue.rear.data : '-'}, empty=${linkedListQueue.isEmpty() ? 'yes' : 'no'}, full=no (dynamic)`;
+}
+
+function addOperationLog(title, message, type = 'info') {
+    const logsContainer = document.getElementById('logsContainer');
+    if (!logsContainer) return;
+
+    const emptyState = logsContainer.querySelector('.empty-logs');
+    if (emptyState) emptyState.remove();
+
+    const logItem = document.createElement('div');
+    logItem.className = `log-item ${type}`;
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    logItem.innerHTML = `
+      <div class="log-header">
+        <span class="log-title">${title}</span>
+        <span class="log-time">${time}</span>
+      </div>
+      <div class="log-msg">${message}</div>
+      <div class="log-state">${getQueueSnapshot()}</div>
+    `;
+
+    logsContainer.prepend(logItem);
+    while (logsContainer.children.length > 20) {
+        logsContainer.removeChild(logsContainer.lastChild);
+    }
+}
+
+function updateQueueStatusCard() {
+    const modeEl = document.getElementById('queueModeStatus');
+    const emptyEl = document.getElementById('queueEmptyStatus');
+    const fullEl = document.getElementById('queueFullStatus');
+    if (!modeEl || !emptyEl || !fullEl) return;
+
+    const isArray = currentMode === 'array';
+    const isEmpty = isArray ? arrayQueue.isEmpty() : linkedListQueue.isEmpty();
+    const isFull = isArray ? arrayQueue.isFull() : false;
+
+    modeEl.textContent = `Mode: ${isArray ? 'Array' : 'Linked List'}`;
+    emptyEl.textContent = `Empty: ${isEmpty ? 'Yes' : 'No'}`;
+    fullEl.textContent = `Full: ${isArray ? (isFull ? 'Yes' : 'No') : 'Dynamic'}`;
+
+    emptyEl.classList.toggle('warning', isEmpty);
+    emptyEl.classList.toggle('success', !isEmpty);
+    fullEl.classList.toggle('warning', isArray && isFull);
+    fullEl.classList.toggle('success', !isArray || !isFull);
+}
+
 // Display result on UI - stays visible until next operation
-function displayResult(message) {
+function displayResult(message, type = 'info') {
     const resultDiv = document.getElementById('operationResult');
     const resultText = document.getElementById('resultText');
+    if (!resultDiv || !resultText) return;
     resultText.textContent = message;
-    resultDiv.classList.remove('hidden');
-    // Result now stays visible until next operation is performed
+    resultDiv.className = `operation-result ${type}`;
 }
 
 // Array Queue Visualization
@@ -249,7 +303,6 @@ function drawArrayQueue() {
 
     const defs = document.createElementNS(svgNS, 'defs');
     
-    // Green arrow for Front
     const markerFront = document.createElementNS(svgNS, 'marker');
     markerFront.setAttribute('id', 'arrowFront');
     markerFront.setAttribute('markerWidth', '10');
@@ -263,7 +316,6 @@ function drawArrayQueue() {
     markerFront.appendChild(posFront);
     defs.appendChild(markerFront);
 
-    // Orange arrow for Rear
     const markerRear = document.createElementNS(svgNS, 'marker');
     markerRear.setAttribute('id', 'arrowRear');
     markerRear.setAttribute('markerWidth', '10');
@@ -285,7 +337,6 @@ function drawArrayQueue() {
     const startX = (700 - (arrayQueue.size * boxWidth + (arrayQueue.size - 1) * spacing)) / 2;
     const startY = 80;
 
-    // Draw boxes
     for (let i = 0; i < arrayQueue.size; i++) {
         const x = startX + i * (boxWidth + spacing);
         const y = startY;
@@ -329,7 +380,8 @@ function drawArrayQueue() {
         text.setAttribute('font-family', 'Courier New, monospace');
 
         if (arrayQueue.queue[i] !== null) {
-            text.textContent = arrayQueue.queue[i];
+            const displayValue = String(arrayQueue.queue[i]);
+            text.textContent = displayValue.length > 4 ? `${displayValue.slice(0, 3)}…` : displayValue;
         } else {
             text.setAttribute('font-size', '14');
             text.setAttribute('fill', '#94a3b8');
@@ -337,7 +389,6 @@ function drawArrayQueue() {
         }
         canvas.appendChild(text);
 
-        // Index label
         const indexLabel = document.createElementNS(svgNS, 'text');
         indexLabel.setAttribute('x', x + boxWidth / 2);
         indexLabel.setAttribute('y', y + boxHeight + 22);
@@ -349,7 +400,6 @@ function drawArrayQueue() {
         canvas.appendChild(indexLabel);
     }
 
-    // Front pointer
     if (arrayQueue.front !== -1) {
         const frontX = startX + arrayQueue.front * (boxWidth + spacing) + boxWidth / 2;
         const frontY = startY - 50;
@@ -365,7 +415,6 @@ function drawArrayQueue() {
         frontLine.setAttribute('marker-end', 'url(#arrowFront)');
         canvas.appendChild(frontLine);
 
-        // FRONT label with background
         const labelRect = document.createElementNS(svgNS, 'rect');
         labelRect.setAttribute('x', frontX - 32);
         labelRect.setAttribute('y', frontY - 12);
@@ -389,7 +438,6 @@ function drawArrayQueue() {
         canvas.appendChild(frontLabel);
     }
 
-    // Rear pointer
     if (arrayQueue.rear !== -1) {
         const rearX = startX + arrayQueue.rear * (boxWidth + spacing) + boxWidth / 2;
         const rearY = startY + boxHeight + 50;
@@ -405,7 +453,6 @@ function drawArrayQueue() {
         rearLine.setAttribute('marker-end', 'url(#arrowRear)');
         canvas.appendChild(rearLine);
 
-        // REAR label with background
         const labelRect = document.createElementNS(svgNS, 'rect');
         labelRect.setAttribute('x', rearX - 28);
         labelRect.setAttribute('y', rearY - 5);
@@ -429,12 +476,59 @@ function drawArrayQueue() {
         canvas.appendChild(rearLabel);
     }
 
-    // Update info display
+    // Dynamic Connection Arrow from REAR to FRONT
+    if (!arrayQueue.isEmpty() && arrayQueue.getSize() > 1) {
+        const rearX = startX + arrayQueue.rear * (boxWidth + spacing) + boxWidth / 2;
+        const frontX = startX + arrayQueue.front * (boxWidth + spacing) + boxWidth / 2;
+        
+        const isWrapped = arrayQueue.rear < arrayQueue.front;
+        const wrapPath = document.createElementNS(svgNS, 'path');
+        
+        // If wrapped (rear < front), curve underneath. If normal (rear > front), curve above.
+        const baseY = isWrapped ? startY + boxHeight + 10 : startY - 10;
+        const controlY = isWrapped ? startY + boxHeight + 90 : startY - 90;
+        const midX = (rearX + frontX) / 2;
+        
+        // Create a smooth quadratic bezier curve
+        const d = `M ${rearX} ${baseY} Q ${midX} ${controlY} ${frontX} ${baseY}`;
+        
+        wrapPath.setAttribute('d', d);
+        wrapPath.setAttribute('stroke', '#ea580c'); // Orange to match REAR color
+        wrapPath.setAttribute('stroke-width', '2.5');
+        wrapPath.setAttribute('stroke-dasharray', '6,4'); // Dashed to indicate virtual link
+        wrapPath.setAttribute('fill', 'none');
+        wrapPath.setAttribute('marker-end', 'url(#arrowRear)'); 
+        canvas.appendChild(wrapPath);
+
+        // Add a clean label to the curve
+        const wrapText = document.createElementNS(svgNS, 'text');
+        wrapText.setAttribute('x', midX);
+        wrapText.setAttribute('y', isWrapped ? controlY - 8 : controlY + 15);
+        wrapText.setAttribute('text-anchor', 'middle');
+        wrapText.setAttribute('font-size', '12');
+        wrapText.setAttribute('font-weight', 'bold');
+        wrapText.setAttribute('fill', '#ea580c');
+        wrapText.textContent = 'Rear → Front';
+        
+        // Add a slight white background behind text for readability
+        const textBg = document.createElementNS(svgNS, 'rect');
+        textBg.setAttribute('x', midX - 45);
+        textBg.setAttribute('y', isWrapped ? controlY - 18 : controlY + 5);
+        textBg.setAttribute('width', '90');
+        textBg.setAttribute('height', '14');
+        textBg.setAttribute('fill', 'rgba(255, 255, 255, 0.7)');
+        textBg.setAttribute('rx', '4');
+        
+        canvas.appendChild(textBg);
+        canvas.appendChild(wrapText);
+    }
+
     document.getElementById('arrayFront').textContent = arrayQueue.front === -1 ? '-' : arrayQueue.front;
     document.getElementById('arrayRear').textContent = arrayQueue.rear === -1 ? '-' : arrayQueue.rear;
     document.getElementById('arraySize').textContent = arrayQueue.getSize();
     document.getElementById('arrayNext').textContent = arrayQueue.isEmpty() ? '-' : arrayQueue.getNextIndex();
     document.getElementById('capacityBadge').textContent = `${arrayQueue.getSize()}/${arrayQueue.size}`;
+    updateQueueStatusCard();
 }
 
 // Linked List Queue Visualization
@@ -442,15 +536,12 @@ function drawLinkedListQueue() {
     const canvas = document.getElementById('linkedListCanvas');
     const svgNS = 'http://www.w3.org/2000/svg';
 
-    // Clear canvas
     while (canvas.firstChild) {
         canvas.removeChild(canvas.firstChild);
     }
 
-    // Add defs with arrow markers
     const defs = document.createElementNS(svgNS, 'defs');
     
-    // Blue arrow for forward links
     const markerArrow = document.createElementNS(svgNS, 'marker');
     markerArrow.setAttribute('id', 'arrowhead');
     markerArrow.setAttribute('markerWidth', '10');
@@ -464,21 +555,19 @@ function drawLinkedListQueue() {
     markerArrow.appendChild(polygon1);
     defs.appendChild(markerArrow);
 
-    // Red arrow for circular connection
-    const markerArrowRed = document.createElementNS(svgNS, 'marker');
-    markerArrowRed.setAttribute('id', 'arrowhead-red');
-    markerArrowRed.setAttribute('markerWidth', '10');
-    markerArrowRed.setAttribute('markerHeight', '10');
-    markerArrowRed.setAttribute('refX', '9');
-    markerArrowRed.setAttribute('refY', '3');
-    markerArrowRed.setAttribute('orient', 'auto');
-    const polygon2 = document.createElementNS(svgNS, 'polygon');
-    polygon2.setAttribute('points', '0 0, 10 3, 0 6');
-    polygon2.setAttribute('fill', '#ef4444');
-    markerArrowRed.appendChild(polygon2);
-    defs.appendChild(markerArrowRed);
+    const markerArrowOrange = document.createElementNS(svgNS, 'marker');
+    markerArrowOrange.setAttribute('id', 'arrowhead-orange');
+    markerArrowOrange.setAttribute('markerWidth', '10');
+    markerArrowOrange.setAttribute('markerHeight', '10');
+    markerArrowOrange.setAttribute('refX', '9');
+    markerArrowOrange.setAttribute('refY', '3');
+    markerArrowOrange.setAttribute('orient', 'auto');
+    const polygonOrange = document.createElementNS(svgNS, 'polygon');
+    polygonOrange.setAttribute('points', '0 0, 10 3, 0 6');
+    polygonOrange.setAttribute('fill', '#ff8c00');
+    markerArrowOrange.appendChild(polygonOrange);
+    defs.appendChild(markerArrowOrange);
 
-    // Add CSS animation style
     const style = document.createElementNS(svgNS, 'style');
     style.textContent = `
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
@@ -490,7 +579,7 @@ function drawLinkedListQueue() {
     if (linkedListQueue.isEmpty()) {
         const emptyText = document.createElementNS(svgNS, 'text');
         emptyText.setAttribute('x', '350');
-        emptyText.setAttribute('y', '210');
+        emptyText.setAttribute('y', '240');
         emptyText.setAttribute('text-anchor', 'middle');
         emptyText.setAttribute('dominant-baseline', 'middle');
         emptyText.setAttribute('font-size', '22');
@@ -504,130 +593,71 @@ function drawLinkedListQueue() {
         document.getElementById('llSize').textContent = '0';
         document.getElementById('llSizeBadge').textContent = '0 nodes';
         document.getElementById('llCircular').textContent = '❌';
+        updateQueueStatusCard();
         return;
     }
 
     const nodes = linkedListQueue.getAllNodes();
     const size = nodes.length;
+    const nodeRadius = size > 8 ? 24 : size > 5 ? 27 : 30;
+    
+    // INCREASED height and adjusted center to prevent text cutoff
+    canvas.setAttribute('height', '500');
+    canvas.setAttribute('viewBox', '0 0 700 500');
+    const centerX = 350;
+    const centerY = 250; 
+    
+    // SLIGHTLY smaller radius to ensure labels stay within bounds
+    const circleRadius = Math.min(145, Math.max(90, 80 + size * 10));
     const nodePositions = {};
 
-    // Dynamic node radius based on number of nodes
-    let nodeRadius;
-    let circleRadius;
-    
-    if (size <= 3) {
-        nodeRadius = 42;
-        circleRadius = 120;
-    } else if (size <= 6) {
-        nodeRadius = 36;
-        circleRadius = 130;
-    } else if (size <= 10) {
-        nodeRadius = 30;
-        circleRadius = 140;
-    } else {
-        nodeRadius = 24;
-        circleRadius = 150;
-    }
+    nodes.forEach((node, index) => {
+        const angle = -Math.PI / 2 + (index / size) * Math.PI * 2;
+        const x = centerX + circleRadius * Math.cos(angle);
+        const y = centerY + circleRadius * Math.sin(angle);
+        nodePositions[node.id] = { x, y, angle };
+    });
 
-    // Determine layout: circular for 3+ nodes, horizontal for 1-2 nodes
-    const useCircularLayout = size >= 3;
-    const centerX = 350;
-    const centerY = 220;
-
-    // Calculate node positions
-    if (useCircularLayout) {
-        // Circular layout
-        nodes.forEach((node, index) => {
-            const angle = (index / size) * 2 * Math.PI - Math.PI / 2;
-            const x = centerX + circleRadius * Math.cos(angle);
-            const y = centerY + circleRadius * Math.sin(angle);
-            nodePositions[node.id] = { x, y, index };
-        });
-    } else {
-        // Horizontal layout
-        const startX = centerX - (size - 1) * 80;
-        nodes.forEach((node, index) => {
-            const x = startX + index * 160;
-            const y = centerY;
-            nodePositions[node.id] = { x, y, index };
+    const links = [];
+    for (let i = 0; i < size; i++) {
+        links.push({
+            source: nodes[i],
+            target: nodes[(i + 1) % size],
+            isCircularLink: i === size - 1
         });
     }
 
-    // Draw connection lines first (so they appear behind nodes)
-    for (let i = 0; i < nodes.length - 1; i++) {
-        const fromPos = nodePositions[nodes[i].id];
-        const toPos = nodePositions[nodes[i + 1].id];
+    links.forEach((link) => {
+        const fromPos = nodePositions[link.source.id];
+        const toPos = nodePositions[link.target.id];
+        const ux = (toPos.x - fromPos.x) / Math.hypot(toPos.x - fromPos.x, toPos.y - fromPos.y);
+        const uy = (toPos.y - fromPos.y) / Math.hypot(toPos.x - fromPos.x, toPos.y - fromPos.y);
+        const sx = fromPos.x + ux * nodeRadius;
+        const sy = fromPos.y + uy * nodeRadius;
+        const ex = toPos.x - ux * nodeRadius;
+        const ey = toPos.y - uy * nodeRadius;
 
-        if (useCircularLayout) {
-            // Curved line for circular layout
-            const midX = (fromPos.x + toPos.x) / 2;
-            const midY = (fromPos.y + toPos.y) / 2;
-            const path = document.createElementNS(svgNS, 'path');
-            const controlX = centerX + (centerX - midX) * 0.3;
-            const controlY = centerY + (centerY - midY) * 0.3;
-            const d = `M ${fromPos.x} ${fromPos.y} Q ${controlX} ${controlY} ${toPos.x} ${toPos.y}`;
-            path.setAttribute('d', d);
-            path.setAttribute('stroke', '#3b82f6');
-            path.setAttribute('stroke-width', '2.5');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('marker-end', 'url(#arrowhead)');
-            canvas.appendChild(path);
-        } else {
-            // Straight line for horizontal layout
-            const line = document.createElementNS(svgNS, 'line');
-            line.setAttribute('x1', fromPos.x + nodeRadius);
-            line.setAttribute('y1', fromPos.y);
-            line.setAttribute('x2', toPos.x - nodeRadius);
-            line.setAttribute('y2', toPos.y);
-            line.setAttribute('stroke', '#3b82f6');
-            line.setAttribute('stroke-width', '2.5');
-            line.setAttribute('marker-end', 'url(#arrowhead)');
-            canvas.appendChild(line);
-        }
-    }
+        const path = document.createElementNS(svgNS, 'path');
+        
+        // FIXED: The circular link now uses the EXACT same perfect arc math as the normal links!
+        const d = `M ${sx} ${sy} A ${circleRadius} ${circleRadius} 0 0 1 ${ex} ${ey}`;
+        
+        path.setAttribute('d', d);
+        path.setAttribute('stroke', link.isCircularLink ? '#ff8c00' : '#3b82f6');
+        path.setAttribute('stroke-width', link.isCircularLink ? '3' : '2.4');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('marker-end', link.isCircularLink ? 'url(#arrowhead-orange)' : 'url(#arrowhead)');
+        canvas.appendChild(path);
+    });
 
-    // Draw circular connection from rear to front
-    if (nodes.length > 0) {
-        const lastNode = nodes[nodes.length - 1];
-        const firstNode = nodes[0];
-        const lastPos = nodePositions[lastNode.id];
-        const firstPos = nodePositions[firstNode.id];
+    // Check if we need to split labels (only 1 node exists)
+    const isSingleNode = size === 1;
 
-        if (useCircularLayout) {
-            const path = document.createElementNS(svgNS, 'path');
-            const angle1 = (nodes.length - 1) / size * 2 * Math.PI - Math.PI / 2;
-            const angle2 = -Math.PI / 2;
-            const controlX = centerX + (circleRadius + 60) * Math.cos((angle1 + angle2) / 2);
-            const controlY = centerY + (circleRadius + 60) * Math.sin((angle1 + angle2) / 2);
-            const d = `M ${lastPos.x} ${lastPos.y} Q ${controlX} ${controlY} ${firstPos.x} ${firstPos.y}`;
-            path.setAttribute('d', d);
-            path.setAttribute('stroke', '#ef4444');
-            path.setAttribute('stroke-width', '2.5');
-            path.setAttribute('stroke-dasharray', '5,5');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('marker-end', 'url(#arrowhead-red)');
-            canvas.appendChild(path);
-        } else {
-            const midY = lastPos.y + 100;
-            const path = document.createElementNS(svgNS, 'path');
-            const d = `M ${lastPos.x - nodeRadius} ${lastPos.y} Q ${(lastPos.x + firstPos.x) / 2} ${midY} ${firstPos.x + nodeRadius} ${firstPos.y}`;
-            path.setAttribute('d', d);
-            path.setAttribute('stroke', '#ef4444');
-            path.setAttribute('stroke-width', '2.5');
-            path.setAttribute('stroke-dasharray', '5,5');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('marker-end', 'url(#arrowhead-red)');
-            canvas.appendChild(path);
-        }
-    }
-
-    // Draw nodes
     nodes.forEach((node, index) => {
         const pos = nodePositions[node.id];
         const x = pos.x;
         const y = pos.y;
 
-        // Determine colors
         let fillColor = '#93c5fd';
         let strokeColor = '#3b82f6';
         let textColor = '#ffffff';
@@ -642,7 +672,6 @@ function drawLinkedListQueue() {
             textColor = '#78350f';
         }
 
-        // Draw node circle
         const circle = document.createElementNS(svgNS, 'circle');
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
@@ -653,8 +682,7 @@ function drawLinkedListQueue() {
         circle.setAttribute('class', 'node-circle');
         canvas.appendChild(circle);
 
-        // Draw node value with responsive font size
-        const fontSize = nodeRadius > 35 ? '24' : nodeRadius > 28 ? '18' : '14';
+        const fontSize = nodeRadius >= 30 ? '15' : '13';
         const text = document.createElementNS(svgNS, 'text');
         text.setAttribute('x', x);
         text.setAttribute('y', y + 3);
@@ -664,15 +692,20 @@ function drawLinkedListQueue() {
         text.setAttribute('font-weight', 'bold');
         text.setAttribute('fill', textColor);
         text.setAttribute('font-family', 'Courier New, monospace');
-        text.textContent = node.data;
+        const nodeValue = String(node.data);
+        text.textContent = nodeValue.length > 3 ? `${nodeValue.slice(0, 2)}…` : nodeValue;
         canvas.appendChild(text);
 
-        // Draw FRONT label with maximum visibility
         if (node === linkedListQueue.front) {
-            // White background box first
+            // FIXED: Prevent overlap if size is 1, and ensure label is far out enough
+            const theta = isSingleNode ? pos.angle - 0.5 : pos.angle; 
+            const labelOffset = 50; 
+            const fx = centerX + (circleRadius + labelOffset) * Math.cos(theta);
+            const fy = centerY + (circleRadius + labelOffset) * Math.sin(theta);
+            
             const whiteBg = document.createElementNS(svgNS, 'rect');
-            whiteBg.setAttribute('x', x - 38);
-            whiteBg.setAttribute('y', y - nodeRadius - 32);
+            whiteBg.setAttribute('x', fx - 38);
+            whiteBg.setAttribute('y', fy - 14);
             whiteBg.setAttribute('width', '76');
             whiteBg.setAttribute('height', '28');
             whiteBg.setAttribute('fill', '#ffffff');
@@ -681,16 +714,17 @@ function drawLinkedListQueue() {
             whiteBg.setAttribute('rx', '5');
             canvas.appendChild(whiteBg);
 
-            // Green arrow pointing to node
+            // FIXED: Arrow correctly points to the outer edge of the node, not the center
             const arrow = document.createElementNS(svgNS, 'polygon');
-            arrow.setAttribute('points', `${x},${y - nodeRadius - 4} ${x - 6},${y - nodeRadius - 14} ${x + 6},${y - nodeRadius - 14}`);
+            const tipX = x + Math.cos(theta) * (nodeRadius + 2);
+            const tipY = y + Math.sin(theta) * (nodeRadius + 2);
+            arrow.setAttribute('points', `${tipX},${tipY} ${fx - 6},${fy} ${fx + 6},${fy}`);
             arrow.setAttribute('fill', '#059669');
             canvas.appendChild(arrow);
 
-            // FRONT text
             const label = document.createElementNS(svgNS, 'text');
-            label.setAttribute('x', x);
-            label.setAttribute('y', y - nodeRadius - 17);
+            label.setAttribute('x', fx);
+            label.setAttribute('y', fy + 3);
             label.setAttribute('text-anchor', 'middle');
             label.setAttribute('dominant-baseline', 'middle');
             label.setAttribute('font-size', '14');
@@ -701,12 +735,16 @@ function drawLinkedListQueue() {
             canvas.appendChild(label);
         }
 
-        // Draw REAR label with maximum visibility
         if (node === linkedListQueue.rear) {
-            // White background box first
+            // FIXED: Prevent overlap if size is 1, and ensure label is far out enough
+            const theta = isSingleNode ? pos.angle + 0.5 : pos.angle;
+            const labelOffset = 50;
+            const rx = centerX + (circleRadius + labelOffset) * Math.cos(theta);
+            const ry = centerY + (circleRadius + labelOffset) * Math.sin(theta);
+            
             const whiteBg = document.createElementNS(svgNS, 'rect');
-            whiteBg.setAttribute('x', x - 35);
-            whiteBg.setAttribute('y', y + nodeRadius + 2);
+            whiteBg.setAttribute('x', rx - 35);
+            whiteBg.setAttribute('y', ry - 14);
             whiteBg.setAttribute('width', '70');
             whiteBg.setAttribute('height', '28');
             whiteBg.setAttribute('fill', '#ffffff');
@@ -715,16 +753,17 @@ function drawLinkedListQueue() {
             whiteBg.setAttribute('rx', '5');
             canvas.appendChild(whiteBg);
 
-            // Orange arrow pointing to node
+            // FIXED: Arrow correctly points to the outer edge of the node, not the center
             const arrow = document.createElementNS(svgNS, 'polygon');
-            arrow.setAttribute('points', `${x},${y + nodeRadius + 4} ${x - 6},${y + nodeRadius + 14} ${x + 6},${y + nodeRadius + 14}`);
+            const tipX = x + Math.cos(theta) * (nodeRadius + 2);
+            const tipY = y + Math.sin(theta) * (nodeRadius + 2);
+            arrow.setAttribute('points', `${tipX},${tipY} ${rx - 6},${ry} ${rx + 6},${ry}`);
             arrow.setAttribute('fill', '#ea580c');
             canvas.appendChild(arrow);
 
-            // REAR text
             const label = document.createElementNS(svgNS, 'text');
-            label.setAttribute('x', x);
-            label.setAttribute('y', y + nodeRadius + 17);
+            label.setAttribute('x', rx);
+            label.setAttribute('y', ry + 3);
             label.setAttribute('text-anchor', 'middle');
             label.setAttribute('dominant-baseline', 'middle');
             label.setAttribute('font-size', '14');
@@ -736,12 +775,12 @@ function drawLinkedListQueue() {
         }
     });
 
-    // Update info display
     document.getElementById('llFront').textContent = linkedListQueue.front ? linkedListQueue.front.data : '-';
     document.getElementById('llRear').textContent = linkedListQueue.rear ? linkedListQueue.rear.data : '-';
     document.getElementById('llSize').textContent = linkedListQueue.getSize();
     document.getElementById('llSizeBadge').textContent = `${linkedListQueue.getSize()} node${linkedListQueue.getSize() !== 1 ? 's' : ''}`;
     document.getElementById('llCircular').textContent = linkedListQueue.getSize() > 0 ? '✅' : '❌';
+    updateQueueStatusCard();
 }
 
 // Event Listeners
@@ -753,8 +792,10 @@ document.getElementById('arrayModeBtn').addEventListener('click', () => {
     
     document.getElementById('arrayModeBtn').classList.add('active');
     document.getElementById('linkedListModeBtn').classList.remove('active');
+    document.getElementById('arraySizeControl').classList.remove('hidden');
     
     drawArrayQueue();
+    addOperationLog('Mode Switched', 'Array implementation selected.', 'info');
 });
 
 document.getElementById('linkedListModeBtn').addEventListener('click', () => {
@@ -765,8 +806,17 @@ document.getElementById('linkedListModeBtn').addEventListener('click', () => {
     
     document.getElementById('linkedListModeBtn').classList.add('active');
     document.getElementById('arrayModeBtn').classList.remove('active');
+    document.getElementById('arraySizeControl').classList.add('hidden');
     
     drawLinkedListQueue();
+    addOperationLog('Mode Switched', 'Linked-list implementation selected.', 'info');
+});
+
+document.getElementById('clearLogsBtn').addEventListener('click', () => {
+    const logsContainer = document.getElementById('logsContainer');
+    if (!logsContainer) return;
+    logsContainer.innerHTML = '<div class="empty-logs">No operations performed yet.</div>';
+    displayResult('🧹 Operation logs cleared.', 'info');
 });
 
 document.getElementById('setSizeBtn').addEventListener('click', () => {
@@ -787,25 +837,32 @@ document.getElementById('setSizeBtn').addEventListener('click', () => {
     arrayQueue = new CircularQueueArray(newSize);
     document.getElementById('arraySizeInput').value = newSize;
     drawArrayQueue();
+    addOperationLog('Set Size', `Array size changed to ${newSize}. Queue reset.`, 'warning');
 });
 
 document.getElementById('enqueueBtn').addEventListener('click', () => {
     const input = document.getElementById('enqueueInput');
-    const value = parseInt(input.value);
+    const value = input.value.trim();
 
-    if (!input.value || isNaN(value) || value < 1 || value > 99) {
-        alert('Enter a value between 1-99');
+    if (!value) {
+        alert('Enter any non-empty value');
         return;
     }
 
     if (currentMode === 'array') {
         const result = arrayQueue.enqueue(value);
         if (!result.success) {
-            alert(result.message);
+            displayResult(`❌ ${result.message}`, 'danger');
+            addOperationLog('Enqueue Failed', `${result.message} ${result.detail}`, 'danger');
+        } else {
+            displayResult(`✅ ${result.message}`, 'success');
+            addOperationLog('Enqueue', `${result.message} (${result.detail})`, 'success');
         }
         drawArrayQueue();
     } else {
-        linkedListQueue.enqueue(value);
+        const result = linkedListQueue.enqueue(value);
+        displayResult(`✅ ${result.message}`, 'success');
+        addOperationLog('Enqueue', `${result.message} (${result.detail})`, 'success');
         drawLinkedListQueue();
     }
 
@@ -817,13 +874,21 @@ document.getElementById('dequeueBtn').addEventListener('click', () => {
     if (currentMode === 'array') {
         const result = arrayQueue.dequeue();
         if (!result.success) {
-            alert(result.message);
+            displayResult(`❌ ${result.message}`, 'danger');
+            addOperationLog('Dequeue Failed', `${result.message} ${result.detail}`, 'danger');
+        } else {
+            displayResult(`✅ ${result.message}`, 'success');
+            addOperationLog('Dequeue', `${result.message} (${result.detail})`, 'warning');
         }
         drawArrayQueue();
     } else {
         const result = linkedListQueue.dequeue();
         if (!result.success) {
-            alert(result.message);
+            displayResult(`❌ ${result.message}`, 'danger');
+            addOperationLog('Dequeue Failed', `${result.message} ${result.detail}`, 'danger');
+        } else {
+            displayResult(`✅ ${result.message}`, 'success');
+            addOperationLog('Dequeue', `${result.message} (${result.detail})`, 'warning');
         }
         drawLinkedListQueue();
     }
@@ -839,6 +904,8 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     } else {
         drawLinkedListQueue();
     }
+    displayResult('🔄 Queue reset completed.', 'info');
+    addOperationLog('Reset', 'Queue state cleared for both implementations.', 'info');
 });
 
 document.getElementById('peekBtn').addEventListener('click', () => {
@@ -850,9 +917,11 @@ document.getElementById('peekBtn').addEventListener('click', () => {
     }
 
     if (result.success) {
-        displayResult('👁️ Front Element: ' + result.element);
+        displayResult('👁️ Front Element: ' + result.element, 'info');
+        addOperationLog('Peek', `${result.message} (${result.detail})`, 'info');
     } else {
-        displayResult('❌ ' + result.message);
+        displayResult('❌ ' + result.message, 'danger');
+        addOperationLog('Peek Failed', `${result.message} ${result.detail}`, 'danger');
     }
 });
 
@@ -865,16 +934,20 @@ document.getElementById('isEmptyBtn').addEventListener('click', () => {
     }
 
     const msg = isEmpty ? '✅ Queue is EMPTY' : '✖️ Queue is NOT empty';
-    displayResult(msg);
+    displayResult(msg, isEmpty ? 'warning' : 'info');
+    addOperationLog('Is Empty Check', msg, isEmpty ? 'warning' : 'info');
 });
 
 document.getElementById('isFullBtn').addEventListener('click', () => {
     if (currentMode === 'array') {
         const isFull = arrayQueue.isFull();
         const msg = isFull ? '⚠️ Queue is FULL' : '✓ Queue is NOT full';
-        displayResult(msg);
+        displayResult(msg, isFull ? 'warning' : 'info');
+        addOperationLog('Is Full Check', msg, isFull ? 'warning' : 'info');
     } else {
-        displayResult('ℹ️ Linked List has unlimited capacity');
+        const msg = 'ℹ️ Linked List has dynamic capacity (not fixed full)';
+        displayResult(msg, 'info');
+        addOperationLog('Is Full Check', msg, 'info');
     }
 });
 
@@ -884,12 +957,11 @@ document.getElementById('enqueueInput').addEventListener('keypress', (e) => {
     }
 });
 
-// Initialize on page load
 window.addEventListener('load', () => {
     drawArrayQueue();
+    updateQueueStatusCard();
 });
 
-// Redraw on window resize for responsive visualization
 window.addEventListener('resize', () => {
     if (currentMode === 'array') {
         drawArrayQueue();

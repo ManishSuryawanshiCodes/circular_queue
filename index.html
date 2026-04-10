@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Circular Queue Visualizer - DES Pune University</title>
+    <title>Circular Queue Visualizer</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
 
@@ -22,18 +22,14 @@
         <header class="header-section">
           <div class="header-top">
             <div class="logo-area">
-              <div class="logo-badge">📚 CE3</div>
               <div class="main-title">Circular Queue Visualizer</div>
-              <p class="subtitle">
-                Data Structures Learning Tool | DES Pune University
-              </p>
             </div>
           </div>
         </header>
 
         <!-- Main Layout -->
         <div class="main-layout">
-          <!-- Visualization & Input -->
+          <!-- Left Panel: Visualization & Input -->
           <div class="main-panel">
             <!-- Setup Section -->
             <div class="setup-section glass-card">
@@ -78,51 +74,26 @@
               </div>
             </div>
 
-            <!-- Quick Status Check Section -->
-            <div class="status-check-section glass-card">
-              <h3 class="section-title">✅ Queue Status Check</h3>
-              <div class="status-buttons-grid">
-                <button id="isEmptyBtn" class="btn btn-info btn-large">
-                  ❓ Is Empty
-                </button>
-                <button id="isFullBtn" class="btn btn-info btn-large">
-                  ⚠️ Is Full
-                </button>
-                <button id="peekBtn" class="btn btn-info btn-large">
-                  👁️ Peek Front
-                </button>
-              </div>
-              <!-- Result Display Area (Persistent) -->
-              <div id="operationResult" class="operation-result hidden">
-                <div class="result-content">
-                  <span id="resultText"></span>
-                </div>
-              </div>
-            </div>
-
             <!-- Visualization Section -->
-            <div
-              id="arrayVisualization"
-              class="visualization-section glass-card"
-            >
+            <div id="arrayVisualization" class="visualization-section glass-card">
               <div class="viz-header">
                 <h3 class="section-title">📊 Array Implementation</h3>
                 <div class="capacity-badge" id="capacityBadge">0/5</div>
               </div>
               <div class="array-info-grid">
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Front Index</span>
                   <span class="info-value" id="arrayFront">-</span>
                 </div>
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Rear Index</span>
                   <span class="info-value" id="arrayRear">-</span>
                 </div>
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Next Position</span>
                   <span class="info-value" id="arrayNext">-</span>
                 </div>
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Current Size</span>
                   <span class="info-value" id="arraySize">0</span>
                 </div>
@@ -138,28 +109,25 @@
               </div>
             </div>
 
-            <div
-              id="linkedListVisualization"
-              class="visualization-section glass-card hidden"
-            >
+            <div id="linkedListVisualization" class="visualization-section glass-card hidden">
               <div class="viz-header">
                 <h3 class="section-title">🔗 Linked List Implementation</h3>
                 <div class="size-badge" id="llSizeBadge">0 nodes</div>
               </div>
               <div class="ll-info-grid">
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Front Value</span>
                   <span class="info-value" id="llFront">-</span>
                 </div>
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Rear Value</span>
                   <span class="info-value" id="llRear">-</span>
                 </div>
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Total Nodes</span>
                   <span class="info-value" id="llSize">0</span>
                 </div>
-                <div class="info-box">
+                <div class="info-box glass-panel">
                   <span class="info-title">Circular Link</span>
                   <span class="info-value" id="llCircular">❌</span>
                 </div>
@@ -175,31 +143,51 @@
               </div>
             </div>
 
-            <!-- Operations Section (directly below visualization) -->
+            <!-- Operations Section -->
             <div class="operations-section glass-card">
               <h3 class="section-title">⚡ Queue Operations</h3>
               <div class="operations-layout">
                 <div class="input-group">
-                  <label for="enqueueInput" class="option-label"
-                    >Enter Value (1-99)</label
-                  >
+                  <label for="enqueueInput" class="option-label">Enter Value (Any Text/Number)</label>
                   <input
-                    type="number"
+                    type="text"
                     id="enqueueInput"
-                    placeholder="Type a number..."
-                    min="1"
-                    max="99"
+                    placeholder="Type any value..."
                     class="input-field"
                   />
                 </div>
                 <div class="button-row">
-                  <button id="enqueueBtn" class="btn btn-success">
-                    ➕ Enqueue
-                  </button>
-                  <button id="dequeueBtn" class="btn btn-warning">
-                    ➖ Dequeue
-                  </button>
+                  <button id="enqueueBtn" class="btn btn-success">➕ Enqueue</button>
+                  <button id="dequeueBtn" class="btn btn-warning">➖ Dequeue</button>
+                  <button id="peekBtn" class="btn btn-info">👁️ Peek</button>
+                  <button id="isEmptyBtn" class="btn btn-info">❓ Is Empty</button>
+                  <button id="isFullBtn" class="btn btn-info">⚠️ Is Full</button>
                 </div>
+                <div id="operationResult" class="operation-result hidden">
+                  <div class="result-content">
+                    <span id="resultText"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Working & Logs -->
+          <div class="sidebar-panel">
+            <!-- Operation Logs Section -->
+            <div class="logs-section glass-card glass-panel">
+              <div class="logs-header">
+                <h3 class="section-title">📝 Operation Logs</h3>
+                <button id="clearLogsBtn" class="btn-small clear-logs-btn">Clear</button>
+              </div>
+              <div class="queue-status-card">
+                <div class="status-pill" id="queueModeStatus">Mode: Array</div>
+                <div class="status-pill" id="queueEmptyStatus">Empty: Yes</div>
+                <div class="status-pill" id="queueFullStatus">Full: No</div>
+              </div>
+              <div id="logsContainer" class="logs-list">
+                <!-- Logs will be injected here -->
+                <div class="empty-logs">No operations performed yet.</div>
               </div>
             </div>
           </div>
